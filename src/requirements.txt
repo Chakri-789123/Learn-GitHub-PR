@@ -4,3 +4,4 @@ sqlalchemy
 pydantic
 email-validator
 python-multipart
+asyncpg
