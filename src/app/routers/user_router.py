@@ -11,16 +11,16 @@ router = APIRouter(prefix="/users", tags=["Users"])
 service = UserServiceImpl()
 
 
-@router.post("/", response_model=UserResponse)
+@router.post("/")
 async def create_user(user: UserCreate, db: AsyncSession = Depends(get_db)):
-    new_user = await service.create_user(db, user)
-    return new_user
+    print("API: Create user called")
+    return await service.create_user(db, user)
 
 
 @router.get("/", response_model=list[UserResponse])
 async def get_users(db: AsyncSession = Depends(get_db)):
-    users = await service.get_all_users(db)
-    return users
+    print("API: Fetch users")
+    return await service.get_all_users(db)
 
 
 @router.get("/{user_id}", response_model=UserResponse)

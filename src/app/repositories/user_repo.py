@@ -29,11 +29,20 @@ class UserRepository:
 
 
     async def get_all_users(self, db: AsyncSession):
-        result = await db.execute(
-            select(User)
-        )
+
+        print("Repository: getting users from DB")
+
+        result = await db.execute(select(User))
 
         return result.scalars().all()
+
+    async def get_user_by_email(self, db: AsyncSession, email: str):
+
+        print("Repository: searching user by email")
+
+        result = await db.execute(select(User).where(User.email == email))
+
+        return result.scalar_one_or_none()
 
 
     async def update_user(self, db: AsyncSession, user_id: int, user: UserUpdate):

@@ -10,7 +10,16 @@ class UserServiceImpl(UserService):
         self.repo = UserRepository()
 
     async def create_user(self, db: AsyncSession, user: UserCreate):
-        return await self.repo.create_user(db, user)
+
+        print("Starting user creation process")
+        existing_user = await self.repo.get_user_by_email(db, user.email)
+
+        if existing_user:
+            raise ValueError("User already exists")
+        new_user = await self.repo.create_user(db, user)
+        print("User created successfully")
+
+        return new_user
 
     async def get_user_by_id(self, db: AsyncSession, user_id: int):
         return await self.repo.get_user_by_id(db, user_id)
