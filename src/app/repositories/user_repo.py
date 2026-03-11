@@ -34,11 +34,19 @@ class UserRepository:
 
         result = await db.execute(select(User))
 
-        return result.scalars().all()
+        result = await db.execute(select(User))
+
+        users = result.scalars().all()
+
+        if users is None:
+            return []
+
+        return users
 
     async def get_user_by_email(self, db: AsyncSession, email: str):
 
-        print("Repository: searching user by email")
+        if not email:
+            raise ValueError("Email cannot be empty")
 
         result = await db.execute(select(User).where(User.email == email))
 

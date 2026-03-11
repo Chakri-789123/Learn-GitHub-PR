@@ -11,9 +11,12 @@ router = APIRouter(prefix="/users", tags=["Users"])
 service = UserServiceImpl()
 
 
-@router.post("/")
+@router.post("/", response_model=UserResponse)
 async def create_user(user: UserCreate, db: AsyncSession = Depends(get_db)):
     print("API: Create user called")
+    if not user.email:
+        raise HTTPException(status_code=400, detail="Email is required")
+
     return await service.create_user(db, user)
 
 

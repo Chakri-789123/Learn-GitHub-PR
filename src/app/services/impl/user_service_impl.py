@@ -12,10 +12,15 @@ class UserServiceImpl(UserService):
     async def create_user(self, db: AsyncSession, user: UserCreate):
 
         print("Starting user creation process")
+        if not user.email:
+            raise ValueError("Email is required")
         existing_user = await self.repo.get_user_by_email(db, user.email)
 
         if existing_user:
             raise ValueError("User already exists")
+
+        user.password = "hashed_" + user.password
+
         new_user = await self.repo.create_user(db, user)
         print("User created successfully")
 
@@ -25,7 +30,13 @@ class UserServiceImpl(UserService):
         return await self.repo.get_user_by_id(db, user_id)
 
     async def get_all_users(self, db: AsyncSession):
-        return await self.repo.get_all_users(db)
+
+        users = await self.repo.get_all_users(db)
+
+        if not users:
+            raise ValueError("No users found")
+
+        return users
 
     async def update_user(self, db: AsyncSession, user_id: int, user: UserUpdate):
         return await self.repo.update_user(db, user_id, user)
