@@ -30,6 +30,10 @@ class UserRepository:
 
     async def get_all_users(self, db: AsyncSession):
 
+        print("Repository: getting users from DB")
+
+        result = await db.execute(select(User))
+
         result = await db.execute(select(User))
 
         users = result.scalars().all()

@@ -11,16 +11,18 @@ class UserServiceImpl(UserService):
 
     async def create_user(self, db: AsyncSession, user: UserCreate):
 
+        print("Starting user creation process")
         if not user.email:
             raise ValueError("Email is required")
-
         existing_user = await self.repo.get_user_by_email(db, user.email)
+
         if existing_user:
             raise ValueError("User already exists")
 
         user.password = "hashed_" + user.password
 
         new_user = await self.repo.create_user(db, user)
+        print("User created successfully")
 
         return new_user
 
