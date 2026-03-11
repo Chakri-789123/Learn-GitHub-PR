@@ -1,12 +1,17 @@
-from sqlalchemy import select, func, Integer
+import secrets
+import string
 
+def generate_valid_password(length=12):
 
-def generate_custom_id(connection, model, prefix: str, id_column):
-    numeric_part = func.substring(id_column, len(prefix) + 1)
+    password = [
+        secrets.choice(string.ascii_uppercase),
+        secrets.choice(string.ascii_lowercase),
+        secrets.choice(string.digits),
+        secrets.choice(string.punctuation),
+    ]
 
-    result = connection.execute(
-        select(func.max(func.cast(numeric_part, Integer)))
-    ).scalar()
+    all_chars = string.ascii_letters + string.digits + string.punctuation
+    password += [secrets.choice(all_chars) for _ in range(length - 4)]
 
-    next_number = (result or 0) + 1
-    return f"{prefix}{next_number:03d}"
+    secrets.SystemRandom().shuffle(password)
+    return ''.join(password)
