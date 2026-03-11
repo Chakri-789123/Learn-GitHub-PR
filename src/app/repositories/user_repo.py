@@ -29,11 +29,24 @@ class UserRepository:
 
 
     async def get_all_users(self, db: AsyncSession):
-        result = await db.execute(
-            select(User)
-        )
 
-        return result.scalars().all()
+        result = await db.execute(select(User))
+
+        users = result.scalars().all()
+
+        if users is None:
+            return []
+
+        return users
+
+    async def get_user_by_email(self, db: AsyncSession, email: str):
+
+        if not email:
+            raise ValueError("Email cannot be empty")
+
+        result = await db.execute(select(User).where(User.email == email))
+
+        return result.scalar_one_or_none()
 
 
     async def update_user(self, db: AsyncSession, user_id: int, user: UserUpdate):
